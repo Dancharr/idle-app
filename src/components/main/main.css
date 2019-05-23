@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:700');
+.column{
+    float: left;
+    height: 500px;
+    border: 2px;
+    border-color: black;
+    border-style: solid;
+}
+
+
+.button {
+    background-color: white; /* Green */
+    border: 4px;
+    border-style: solid;
+    border-color: black;
+    color: black;
+    padding: 15px 32px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    user-select: none;
+}
+
+.button:hover{
+    background-color: rgb(226, 241, 226);
+}
+.button:active{
+    background-color: rgb(4, 187, 80);
+}
+
+body, html {
+    height: 100%;
+    margin: 0 auto;
+}
+
+body {
+    font-family: 'Montserrat';
+    font-size: 18px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.container {
+    width: 80%;
+    margin: 5px;
+    padding: 1.3em;
+    display: grid;
+    grid-template-columns: 30% auto;
+
+}
+
+section {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2em;
+}
