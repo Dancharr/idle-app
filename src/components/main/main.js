@@ -140,7 +140,7 @@ class Main extends Component {
           
           <div className="column">
             <div className={css(styles.button)} onClick={() => this.reset()}>reset</div>
-            <div>Iru: {this.state.iru.num.toFixed(2)} [{(this.state.iru.gainBase * this.state.iru.gainMulti).toFixed(2)}/s]</div>
+            <div>Iggas: {this.state.iru.num.toFixed(2)} [{(this.state.iru.gainBase * this.state.iru.gainMulti).toFixed(2)}/s]</div>
             <div>Wood: {this.state.wood.num} [{(this.state.wood.gainBase * this.state.wood.gainMulti).toFixed(2)}/s]</div>
             <div>Wood Golem: {this.state.woodGolem.available}/{this.state.woodGolem.num}</div>
             <div>=============================</div>
