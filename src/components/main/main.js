@@ -192,7 +192,7 @@ class Main extends Component {
 
   tick(){
     for(let key in this.state){
-      this.updateNum(key, this.calculateTotalGain(key) * 0.1);
+      this.updateNum(key, this.state[key].num + this.calculateTotalGain(key) * 0.1);
     }
     localStorage.setItem('mainState', JSON.stringify(this.state));
 
@@ -229,7 +229,7 @@ class Main extends Component {
       let temp = {
         [resource] : {
           ...state[resource],
-          num : state[resource].num + amount
+          num : amount
         }
       }
       return temp;
@@ -284,8 +284,9 @@ class Main extends Component {
 
   click = (resource) => {
     if(this.state[this.state[resource].costs.names[0]].num >= this.state[resource].costs.val[0]){
-      this.updateNum(resource, 1);
-      this.updateNum(this.state[resource].costs.names[0], -this.state[resource].costs.val[0]);
+      debugger;
+      this.updateNum(resource, this.state[resource].num + 1);
+      this.updateNum(this.state[resource].costs.names[0], this.state[resource].num-this.state[resource].costs.val[0]);
       this.updateCost(resource, this.state[resource].ratio);
       this.effects[resource].forEach(fn => fn());
     }
