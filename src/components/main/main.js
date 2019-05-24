@@ -21,8 +21,10 @@ class Main extends Component {
           val : [0]
         },
         ratio : 1,
-        gainBase : 0,
-        gainMulti : 1,
+        gainBase : {
+          harvester : 0
+        },
+        gainMulti : {},
       },
 
       wood : {
@@ -33,8 +35,10 @@ class Main extends Component {
           val : [10]
         },
         ratio : 1,
-        gainBase : 0,
-        gainMulti : 1,
+        gainBase : {
+          woodGolem : 0,
+        },
+        gainMulti : {},
       },
 
       harvester : {
@@ -45,8 +49,8 @@ class Main extends Component {
           val : [15]
         },
         ratio : 1.20,
-        gainBase : 0,
-        gainMulti : 1,
+        gainBase : {},
+        gainMulti : {},
       },
 
       woodGolem : {
@@ -57,8 +61,8 @@ class Main extends Component {
           val : [5]
         },
         ratio : 1.5,
-        gainBase : 0,
-        gainMulti : 1,
+        gainBase : {},
+        gainMulti : {},
 
         available: 5,
         location : {
@@ -95,7 +99,7 @@ class Main extends Component {
     wood : [],
     harvester : [
       () => {
-        this.updateGain("iru", 0.6, true);
+        this.updateGain("iru", "harvester", 0.6, true);
       },
     ],
     woodGolem : [
@@ -140,8 +144,8 @@ class Main extends Component {
           
           <div className="column">
             <div className={css(styles.button)} onClick={() => this.reset()}>reset</div>
-            <div>Iggas: {this.state.iru.num.toFixed(2)} [{(this.state.iru.gainBase * this.state.iru.gainMulti).toFixed(2)}/s]</div>
-            <div>Wood: {this.state.wood.num} [{(this.state.wood.gainBase * this.state.wood.gainMulti).toFixed(2)}/s]</div>
+            <div>Iru: {this.state.iru.num.toFixed(2)} [{this.calculateTotalGain("iru").toFixed(2)}/s]</div>
+            <div>Wood: {this.state.wood.num} [{this.calculateTotalGain("wood").toFixed(2)}/s]</div>
             <div>Wood Golem: {this.state.woodGolem.available}/{this.state.woodGolem.num}</div>
             <div>=============================</div>
             <div>Forest: {this.state.woodGolem.location.forest}</div>
@@ -174,9 +178,21 @@ class Main extends Component {
     );
   }
 
+  calculateTotalGain(resource){
+    let totalBase = 0, totalMulti = 1;
+    for(let key in this.state[resource].gainBase){ 
+      totalBase += this.state[resource].gainBase[key]
+    }
+    
+    for(let key in this.state[resource].gainMulti){
+      totalMulti += this.state[resource].gainMulti[key]
+    }
+    return totalBase * totalMulti;
+  }
+
   tick(){
     for(let key in this.state){
-      this.updateNum(key, 0.1 * this.state[key].gainBase * this.state[key].gainMulti);
+      this.updateNum(key, this.calculateTotalGain(key) * 0.1);
     }
     localStorage.setItem('mainState', JSON.stringify(this.state));
 
@@ -235,13 +251,16 @@ class Main extends Component {
     });
   }
 
-  updateGain = (resource, amount, ifBase) => {
+  updateGain = (resource, source, amount, ifBase) => {
     if(ifBase){
       this.setState((state) => {
         let temp = {
           [resource] : {
             ...state[resource],
-            gainBase : state[resource].gainBase + amount
+            gainBase : {
+              ...state[resource].gainBase,
+              [source] : this.state[resource].gainBase[source] + amount
+            }
           }
         }
         return temp;
@@ -252,7 +271,10 @@ class Main extends Component {
         let temp = {
           [resource] : {
             ...state[resource],
-            gainMulti : state[resource].gainMulti + amount
+            gainMulti : {
+              ...state[resource].gainMulti,
+              [source] : this.state[resource].gainMulti[source] + amount
+            }
           }
         }
         return temp;
