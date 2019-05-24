@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip'
 
 import Home from './home/home'
 import Forest from './forest/forest'
+import Mine from './mine/mine'
 
 import '../../App.css'
 
@@ -17,8 +18,6 @@ class Main extends Component {
         id : "iru",
         num : 0,
         costs : {
-          names : ["iru"],
-          val : [0]
         },
         ratio : 1,
         gainBase : {
@@ -31,8 +30,7 @@ class Main extends Component {
         id : "wood",
         num : 0,
         costs : {
-          names : ["iru"],
-          val : [10]
+          iru : 10,
         },
         ratio : 1,
         gainBase : {
@@ -45,8 +43,7 @@ class Main extends Component {
         id : "harvester",
         num : 0,
         costs : {
-          names : ["iru"],
-          val : [15]
+          iru : 15,
         },
         ratio : 1.20,
         gainBase : {},
@@ -57,8 +54,7 @@ class Main extends Component {
         id : "woodGolem",
         num : 5,
         costs : {
-          names : ["wood"],
-          val : [5]
+          wood : 5,
         },
         ratio : 1.5,
         gainBase : {},
@@ -99,7 +95,7 @@ class Main extends Component {
     wood : [],
     harvester : [
       () => {
-        this.updateGain("iru", "harvester", 0.6, true);
+        this.updateGain("iru", "harvester", this.state.harvester.num * 0.6, true);
       },
     ],
     woodGolem : [
@@ -120,10 +116,11 @@ class Main extends Component {
     });
   }
 
-  assignGolem = (where, golem, amount) => {
+  assignGolem = async(where, golem, amount) => {
     if(this.state[golem].available >= amount && this.state[golem].location[where] >= -amount){
       this.updateGeneric2(golem, "location", where, amount);
-      this.updateGeneric(golem, "available", -amount);
+      await this.updateGeneric(golem, "available", -amount);
+      this.updateGain("wood", golem, this.state[golem].location[where], true);
     }
     
   }
@@ -140,12 +137,15 @@ class Main extends Component {
               <li>
                 <Link to="/main/forest">Forest</Link>
               </li>
+              <li>
+                <Link to="/main/mine">Mine</Link>
+              </li>
           </ul>
           
           <div className="column">
             <div className={css(styles.button)} onClick={() => this.reset()}>reset</div>
             <div>Iru: {this.state.iru.num.toFixed(2)} [{this.calculateTotalGain("iru").toFixed(2)}/s]</div>
-            <div>Wood: {this.state.wood.num} [{this.calculateTotalGain("wood").toFixed(2)}/s]</div>
+            <div>Wood: {this.state.wood.num.toFixed(2)} [{this.calculateTotalGain("wood").toFixed(2)}/s]</div>
             <div>Wood Golem: {this.state.woodGolem.available}/{this.state.woodGolem.num}</div>
             <div>=============================</div>
             <div>Forest: {this.state.woodGolem.location.forest}</div>
@@ -174,6 +174,11 @@ class Main extends Component {
                 render={(props) => <Forest {...props} 
                   click={this.click}/>}
               />
+              <Route 
+                path="/main/minet" 
+                render={(props) => <Mine {...props} 
+                  click={this.click}/>}
+              />
             </div>
     );
   }
@@ -195,7 +200,6 @@ class Main extends Component {
       this.updateNum(key, this.state[key].num + this.calculateTotalGain(key) * 0.1);
     }
     localStorage.setItem('mainState', JSON.stringify(this.state));
-
   }
 
   updateGeneric = (resource, stat, amount) => {
@@ -237,14 +241,15 @@ class Main extends Component {
   }
 
   updateCost = (resource, amount) => {
+    let newCosts = this.state[resource].costs;
+    for(let key in this.state[resource].costs){
+      newCosts[key] = this.state[resource].costs[key] * amount;
+    }
     this.setState((state) => {
       let temp = {
         [resource] : {
           ...state[resource],
-          costs : {
-            ...state[resource].costs,
-            val : state[resource].costs.val.map((number) => number * amount)
-          }
+          costs : newCosts
         }
       }
       return temp;
@@ -259,7 +264,7 @@ class Main extends Component {
             ...state[resource],
             gainBase : {
               ...state[resource].gainBase,
-              [source] : this.state[resource].gainBase[source] + amount
+              [source] : amount
             }
           }
         }
@@ -282,14 +287,16 @@ class Main extends Component {
     }
   }
 
-  click = (resource) => {
-    if(this.state[this.state[resource].costs.names[0]].num >= this.state[resource].costs.val[0]){
-      debugger;
-      this.updateNum(resource, this.state[resource].num + 1);
-      this.updateNum(this.state[resource].costs.names[0], this.state[resource].num-this.state[resource].costs.val[0]);
-      this.updateCost(resource, this.state[resource].ratio);
-      this.effects[resource].forEach(fn => fn());
+  click = async(resource) => {
+    for(let key in this.state[resource].costs){
+      if(this.state[resource].costs[key] > this.state[key].num){return;}
     }
+    this.updateNum(resource, this.state[resource].num + 1);
+    for(let key in this.state[resource].costs){
+      this.updateNum(key, this.state[key].num - this.state[resource].costs[key]);
+    }
+    await this.updateCost(resource, this.state[resource].ratio);
+    this.effects[resource].forEach(fn => fn());
   }
 
 

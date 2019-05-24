@@ -24,7 +24,7 @@ class Home extends Component {
               Build Iru Harvester [{this.props.main.harvester.num}]
           </div>
           <ReactTooltip id='harvesterCost' type='error'>
-            <span>{this.props.main.harvester.costs.names}: {this.props.main.harvester.costs.val}</span>
+            {/* <span>{this.props.main.harvester.costs}</span> */}
           </ReactTooltip>
 
           <div 
@@ -34,7 +34,7 @@ class Home extends Component {
               Build Wooden Golem [{this.props.main.woodGolem.num}]
           </div>
           <ReactTooltip id='woodGolemCost' type='error'>
-            <span>{this.props.main.woodGolem.costs.names}: {this.props.main.woodGolem.costs.val}</span>
+            {/* <span>{this.props.main.woodGolem.costs}</span> */}
           </ReactTooltip>
         </div>
     );
