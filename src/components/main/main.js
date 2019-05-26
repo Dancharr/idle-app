@@ -13,6 +13,10 @@ import '../../App.css'
 class Main extends Component {
   constructor(props){
     super(props);
+
+    // =============================
+    // Default state of resources
+    // =============================
     this.baseState = {
       iru : {
         id : "iru",
@@ -39,6 +43,19 @@ class Main extends Component {
         gainMulti : {},
       },
 
+      stone : {
+        id : "stone",
+        num : 0,
+        costs : {
+          iru : 20,
+        },
+        ratio : 1,
+        gainBase : {
+          woodGolem : 0,
+        },
+        gainMulti : {},
+      },
+
       harvester : {
         id : "harvester",
         num : 0,
@@ -52,20 +69,35 @@ class Main extends Component {
 
       woodGolem : {
         id : "woodGolem",
-        num : 5,
+        num : 0,
         costs : {
           wood : 5,
         },
         ratio : 1.5,
-        gainBase : {},
-        gainMulti : {},
+        efficiency : 1,
 
-        available: 5,
+        available: 0,
         location : {
           forest : 0,
+          mine : 0,
         }
       },
 
+      stoneGolem : {
+        id : "stoneGolem",
+        num : 0,
+        costs : {
+          stone : 10,
+        },
+        ratio : 1.5,
+        efficiency : 5,
+
+        available: 0,
+        location : {
+          forest : 0,
+          mine : 0,
+        }
+      },
     }
     this.state = this.baseState;
     
@@ -93,6 +125,7 @@ class Main extends Component {
   effects = {
     iru : [],
     wood : [],
+    stone : [],
     harvester : [
       () => {
         this.updateGain("iru", "harvester", this.state.harvester.num * 0.6, true);
@@ -100,14 +133,17 @@ class Main extends Component {
     ],
     woodGolem : [
       () => {
-        this.updateGeneric("woodGolem", 1, "available");
+        this.updateGeneric("woodGolem", "available", 1);
       }
     ],  
+    stoneGolem : [
+      () => {
+        this.updateGeneric("stoneGolem", "available", 1);
+      }
+    ]
   }
 
-  // =============================
-  // Default state of resources
-  // =============================
+
 
   reset = () => {
     localStorage.clear();
@@ -120,7 +156,11 @@ class Main extends Component {
     if(this.state[golem].available >= amount && this.state[golem].location[where] >= -amount){
       this.updateGeneric2(golem, "location", where, amount);
       await this.updateGeneric(golem, "available", -amount);
-      this.updateGain("wood", golem, this.state[golem].location[where], true);
+
+      let gather;
+      if(where == "forest"){gather = "wood"}
+      else if (where == "mine"){gather = "stone"}
+      this.updateGain(gather, golem, this.state[golem].location[where] * this.state[golem].efficiency, true);
     }
     
   }
@@ -146,20 +186,44 @@ class Main extends Component {
             <div className={css(styles.button)} onClick={() => this.reset()}>reset</div>
             <div>Iru: {this.state.iru.num.toFixed(2)} [{this.calculateTotalGain("iru").toFixed(2)}/s]</div>
             <div>Wood: {this.state.wood.num.toFixed(2)} [{this.calculateTotalGain("wood").toFixed(2)}/s]</div>
+            <div>Stone: {this.state.stone.num.toFixed(2)} [{this.calculateTotalGain("stone").toFixed(2)}/s]</div>
             <div>Wood Golem: {this.state.woodGolem.available}/{this.state.woodGolem.num}</div>
+            <div>Stone Golem: {this.state.stoneGolem.available}/{this.state.stoneGolem.num}</div>
             <div>=============================</div>
             <div>Forest: {this.state.woodGolem.location.forest}</div>
 
             <div 
             className={css(styles.button)} 
             onClick={() => this.assignGolem("forest", "woodGolem", 1)}>
-              assign to forest
+              wood: assign to forest
+            </div>
+            <div 
+            className={css(styles.button)} 
+            onClick={() => this.assignGolem("forest", "stoneGolem", 1)}>
+              stone: assign to forest
             </div>
 
             <div 
             className={css(styles.button)} 
             onClick={() => this.assignGolem("forest", "woodGolem", -1)}>
-              back home
+              wood: back home
+            </div>
+            <div 
+            className={css(styles.button)} 
+            onClick={() => this.assignGolem("forest", "stoneGolem", -1)}>
+              stone: back home
+            </div>
+            <div>Mine: {this.state.woodGolem.location.mine}</div>
+            <div 
+            className={css(styles.button)} 
+            onClick={() => this.assignGolem("mine", "woodGolem", 1)}>
+              wood: assign to mine
+            </div>
+
+            <div 
+            className={css(styles.button)} 
+            onClick={() => this.assignGolem("mine", "woodGolem", -1)}>
+              wood: back home
             </div>
 
             </div>
@@ -175,7 +239,7 @@ class Main extends Component {
                   click={this.click}/>}
               />
               <Route 
-                path="/main/minet" 
+                path="/main/mine" 
                 render={(props) => <Mine {...props} 
                   click={this.click}/>}
               />

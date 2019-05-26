@@ -18,7 +18,7 @@ class Mine extends Component {
     return (
         <div className = "column">
           <h2>mine</h2>
-          <div className={css(styles.button)} onClick={() => this.props.click("wood")}>Gather Wood</div>
+          <div className={css(styles.button)} onClick={() => this.props.click("stone")}>Mine Stone</div>
         </div>
     );
   }
