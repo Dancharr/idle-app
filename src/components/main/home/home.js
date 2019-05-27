@@ -23,6 +23,16 @@ class Home extends Component {
         )
     });
   }
+  tree = [
+    [
+      <Node name={"A"} x={'1%'} y={'8%'}/>,
+      
+    ],
+    [
+      <Node name={"B"} x={'5%'} y={'2%'}/>
+    ],
+  ]
+
   render() {
     return (
         <div className="column">
@@ -61,9 +71,10 @@ class Home extends Component {
               {this.renderCosts(this.props.main.stoneGolem.costs)}
           </div>
           <div className={css(styles.skillTree)}>
-            <Node className="A" x = {'1%'} y = {'2%'}/>
-            <Node className="B" x = {'5%'} y = {'2%'}/>
-            <LineTo from="A" to="B" />
+            <Node name = {"A"} x = {'1%'} y = {'8%'}/>
+            <Node parent={"A"} name = {"B"} x = {'5%'} y = {'2%'}/>
+            <Node parent={"B"} name = {"C"} x = {'20%'} y = {'5%'}/>
+            <Node parent={"B"} name = {"D"} x = {'18%'} y = {'40%'}/>
           </div>
         </div>  
     );

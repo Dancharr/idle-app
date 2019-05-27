@@ -342,7 +342,7 @@ class Main extends Component {
             ...state[resource],
             gainMulti : {
               ...state[resource].gainMulti,
-              [source] : this.state[resource].gainMulti[source] + amount
+              [source] : state[resource].gainMulti[source] + amount
             }
           }
         }
