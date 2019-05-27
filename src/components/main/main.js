@@ -167,7 +167,7 @@ class Main extends Component {
 
   render() {
     return (
-        <div className="container">
+        <div className={css(styles.rootContainer)}>
           
           <h2>Main works</h2>
           <ul>
@@ -182,7 +182,7 @@ class Main extends Component {
               </li>
           </ul>
           
-          <div className="column">
+          <div className={css(styles.column)}>
             <div className={css(styles.button)} onClick={() => this.reset()}>reset</div>
             <div>Iru: {this.state.iru.num.toFixed(2)} [{this.calculateTotalGain("iru").toFixed(2)}/s]</div>
             <div>Wood: {this.state.wood.num.toFixed(2)} [{this.calculateTotalGain("wood").toFixed(2)}/s]</div>
@@ -393,6 +393,23 @@ const styles = StyleSheet.create({
     display : 'inline-block',
     fontSize: '16px',
     userSelect: 'none',
+  },
+  rootContainer : {
+    height : 'auto',
+    width : '98vw',
+    padding: '1.3em',
+    display: 'grid',
+    gridTemplateColumns: '30% auto',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  },
+  column : {
+    float: 'left',
+    height: '50%',
+    width: '50%',
+    border: '2px',
+    borderColor: 'black',
+    borderStyle: 'solid',
   }
 });
 

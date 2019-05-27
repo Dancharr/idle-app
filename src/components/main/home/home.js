@@ -23,19 +23,28 @@ class Home extends Component {
         )
     });
   }
-  tree = [
-    [
-      <Node name={"A"} x={'1%'} y={'8%'}/>,
-      
-    ],
-    [
-      <Node name={"B"} x={'5%'} y={'2%'}/>
-    ],
-  ]
+  tree = {
+    A : {
+      x : '50px',
+      y : '50px',
+
+    },
+    B : {
+      x : '100px',
+      y : '100px',
+    },
+    C: {
+      x : '100px',
+      y : '200px',
+    },
+  }
+
+
+  
 
   render() {
     return (
-        <div className="column">
+        <div className={css(styles.column)}>
           <h2>Home</h2>
           <div className={css(styles.button)} onClick={() => this.props.click("iru")}>Cultivate Iru</div>
 
@@ -71,10 +80,16 @@ class Home extends Component {
               {this.renderCosts(this.props.main.stoneGolem.costs)}
           </div>
           <div className={css(styles.skillTree)}>
-            <Node name = {"A"} x = {'1%'} y = {'8%'}/>
-            <Node parent={"A"} name = {"B"} x = {'5%'} y = {'2%'}/>
-            <Node parent={"B"} name = {"C"} x = {'20%'} y = {'5%'}/>
-            <Node parent={"B"} name = {"D"} x = {'18%'} y = {'40%'}/>
+            
+            <svg width='100%' height='100%'>
+            <Node tree={this.tree} parent={'A'} name={'A'} child={true}/>
+            <Node tree={this.tree} parent={'A'} name={'B'} child={false}/>
+            
+            {/* <Node tree={this.tree} name = {"C"} x = {'320px'} y = {'128px'}/>
+            <Node tree={this.tree} name = {"D"} x = {'400px'} y = {'253px'}/>
+            <Node tree={this.tree} name = {"E"} x = {'450px'} y = {'500px'}/>
+            <Node tree={this.tree} name = {"F"} x = {'650px'} y = {'600px'}/> */}
+            </svg> 
           </div>
         </div>  
     );
@@ -103,7 +118,20 @@ const styles = StyleSheet.create({
     userSelect: 'none',
   },
   skillTree : {
-    height : '50%'
+    height : '5000px',
+    width : '5000px',
+    userSelect : 'none',
+    position: 'absolute',
+  },
+  column : {
+    float: 'left',
+    height: '100%',
+    width: '100%',
+    border: '2px',
+    borderColor: 'black',
+    borderStyle: 'solid',
+    position: 'relative',
+    overflow: 'scroll',
   }
 });
 
