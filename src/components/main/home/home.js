@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import ReactTooltip from 'react-tooltip'
 
-import Main from '../main'
 import Node from '../node/node'
-import LineTo from 'react-lineto';
 
 import '../../../App.css'
 
@@ -12,6 +10,22 @@ class Home extends Component {
 
   constructor(props){
     super(props);
+
+    // this.state = {
+    //   root : '',
+    //   acceleratedFlow : '#545654',
+    //   golems : '',
+
+    // }
+    this.state = {
+      edges : {
+        root : <line/>,
+          acceleratedFlow : <line/>,
+          golems : <line/>,
+            elementals : <line/>,
+      }
+    }
+    
   }
 
   renderCosts(costs){
@@ -24,21 +38,50 @@ class Home extends Component {
     });
   }
   tree = {
-    A : {
+    root : {
       x : '50px',
       y : '50px',
-
+      parent : 'root',
     },
-    B : {
+    acceleratedFlow : {
       x : '100px',
       y : '100px',
+      parent : 'root',
+      status : 'inactive',
     },
-    C: {
+    golems: {
       x : '100px',
       y : '200px',
+      parent : 'root',
+      status : 'inactive',
     },
+    elementals : {
+      x : '250px',
+      y : '300px',
+      parent : 'golems',
+      status : 'inactive',
+    }
   }
 
+  setEdge = (node, x_1, y_1, x_2, y_2, status) => {
+    this.setState((state) => {
+      let temp = {
+        edges : {
+          ...state.edges,
+          [node] : <line x1={x_1} y1={y_1} x2={x_2} y2={y_2} className={css(styles.edge, styles[status])}/>
+        }
+      }
+      return temp;
+    });
+  }
+
+  renderEdges = () => {
+    return Object.keys(this.state.edges).map((obj) => {
+      return (this.state.edges[obj]);
+    })
+  }
+
+  nodeProps = { render : this.setEdge, func : this.props.tree, tree : this.tree}
 
   
 
@@ -81,9 +124,12 @@ class Home extends Component {
           </div>
           <div className={css(styles.skillTree)}>
             
-            <svg width='100%' height='100%'>
-            <Node tree={this.tree} parent={'A'} name={'A'} child={true}/>
-            <Node tree={this.tree} parent={'A'} name={'B'} child={false}/>
+            <svg width='100%' height='100%' className={css(styles.skillTreeSVG)}>
+              {this.renderEdges()}
+              <Node {...this.nodeProps} parent={'root'} name={'root'}/>
+                <Node {...this.nodeProps} parent={'root'} name={'acceleratedFlow'}/>
+                <Node {...this.nodeProps} parent={'root'} name={'golems'}/>
+                  <Node {...this.nodeProps} parent={'golems'} name={'elementals'}/>
             
             {/* <Node tree={this.tree} name = {"C"} x = {'320px'} y = {'128px'}/>
             <Node tree={this.tree} name = {"D"} x = {'400px'} y = {'253px'}/>
@@ -132,7 +178,18 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     position: 'relative',
     overflow: 'scroll',
-  }
+  },
+  skillTreeSVG : {
+  },
+  edge : {
+    strokeWidth : '3',
+  },
+  inactive : {
+    stroke: '#545654',
+  },
+  active : {
+    stroke: '#3ed84b',
+  },
 });
 
 export default Home;

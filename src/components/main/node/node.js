@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
-import ReactTooltip from 'react-tooltip'
-import LineTo from 'react-lineto';
 
 import '../../../App.css'
+import { async } from 'q';
 
 class Node extends Component {
 
@@ -40,39 +39,62 @@ class Node extends Component {
         },
         edge : {
           strokeWidth : '3',
-          zIndex : '-1',
+        },
+        test : {
+          zIndex : '-2',
         }
 
     
     });
+    
 
     this.state = {
         status : "inactive",
-        fillColour : '#27477a',
-        lineColour : "#545654",
+        fillColour : "#27477a",
     }
-    this.myRef = React.createRef();
-  }
-  click = () => {
-      if(this.state.status === "inactive"){
-        this.setState({status : "active"});
-        this.setState({fillColour : "#166ffc"}); 
-        this.setState({lineColour : "#3ed84b"});     
-      }
-      if(this.state.status === "active"){
-        this.setState({status : "inactive"});
-        this.setState({fillColour : "#27477a"}); 
-        this.setState({lineColour : "#545654"});
-      }
-      console.log(this.myRef.current.offsetTop); 
-      console.log(this.myRef.current); 
-      
+
+    if(this.props.tree[this.props.name].active){
+      this.setState({status : "active"})
+    } 
+    
   }
 
-  renderChild = () => {
-    if(this.props.child){
-      return <Node tree={this.props.tree} parent={'A'} name={'C'} child={false}/>
+  debug = () => {
+    console.log(this.state.status);
+    debugger;
+  }
+
+  init = async() => {
+    if(this.props.name in localStorage){
+      await this.setState(() => {
+        return JSON.parse(localStorage.getItem(this.props.name));
+      }); 
     }
+    this.props.render(this.props.name, this.props.tree[this.props.name].x, this.props.tree[this.props.name].y, this.props.tree[this.props.parent].x, this.props.tree[this.props.parent].y, this.state.status)
+  }
+
+  componentDidMount(){
+    this.init()
+  };
+
+  updateNode = () => {
+    if(this.state.status === "inactive"){
+      this.setState({status : "active"});
+      this.setState({fillColour : "#00e1ff"}); 
+      this.setState({lineColour : "#3ed84b"});     
+    }
+    if(this.state.status === "active"){
+      this.setState({status : "inactive"});
+      this.setState({fillColour : "#27477a"}); 
+      this.setState({lineColour : "#545654"});
+    }
+  }
+
+  click = async() => {
+    this.props.func[this.props.name].effects.forEach(fn =>fn());
+    await this.updateNode();
+    this.props.render(this.props.name, this.props.tree[this.props.name].x, this.props.tree[this.props.name].y, this.props.tree[this.props.parent].x, this.props.tree[this.props.parent].y, this.state.status);
+    localStorage.setItem(this.props.name, JSON.stringify(this.state));
   }
 
   componentWillMount(){
@@ -81,25 +103,15 @@ class Node extends Component {
 
   render() {
     return (
-        <g>
-          <line 
-            x1={this.props.tree[this.props.name].x} 
-            y1={this.props.tree[this.props.name].y} 
-            x2={this.props.tree[this.props.parent].x} 
-            y2={this.props.tree[this.props.parent].y} 
-            className={css(this.styles.edge, this.styles[this.state.status])}
-          />
-          <circle
+          <circle 
             ref={this.myRef} 
             className={css(this.styles.node)} 
             onClick={() => this.click()} 
             cx={this.props.tree[this.props.name].x} 
             cy={this.props.tree[this.props.name].y} 
-            r="10"
+            r="10" 
             fill={this.state.fillColour}
           />
-          {this.renderChild()};
-        </g>
     );
   }
 

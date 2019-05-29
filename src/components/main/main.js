@@ -63,6 +63,7 @@ class Main extends Component {
           iru : 15,
         },
         ratio : 1.20,
+        efficiency : 0.6,
         gainBase : {},
         gainMulti : {},
       },
@@ -128,7 +129,7 @@ class Main extends Component {
     stone : [],
     harvester : [
       () => {
-        this.updateGain("iru", "harvester", this.state.harvester.num * 0.6, true);
+        this.updateGain("iru", "harvester", this.state.harvester.num * this.state.harvester.efficiency, true);
       },
     ],
     woodGolem : [
@@ -231,7 +232,8 @@ class Main extends Component {
                 exact path="/main"
                 render={(props) => <Home {...props} 
                   click={this.click} 
-                  main={this.state}/>}
+                  main={this.state}
+                  tree={this.homeTree}/>}
               />
               <Route 
                 path="/main/forest" 
@@ -370,6 +372,35 @@ class Main extends Component {
 
   startTimer = () => {
     this.interval = setInterval(() => this.tick(), this.tickTimer);
+  }
+
+  homeTree = {
+    root : {
+      effects : [],
+      costs : {},
+    },
+    acceleratedFlow : {
+      effects : [
+        () => {
+          this.updateGeneric("harvester", "efficiency", 1)
+        }
+      ],
+      costs : {
+        iru : 100,
+      },
+    },
+    golems : {
+      effects : [],
+      costs : {
+        iru : 100,
+      },
+    },
+    elementals : {
+      effects : [],
+      costs : {
+        iru : 100,
+      }
+    }
   }
 }
 
