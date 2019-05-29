@@ -38,29 +38,29 @@ class Home extends Component {
     });
   }
   tree = {
-    root : {
+    root: {
       x : '50px',
       y : '50px',
-      parent : 'root',
+      children : {
+        acceleratedFlow : {
+          x : '100px',
+          y : '100px',
+          children : {},
+        },
+        golems: {
+          x : '100px',
+          y : '200px',
+          children : {
+            elementals : {
+              x : '250px',
+              y : '300px',
+              children : {},
+            }
+          },
+        },
+        
+      },
     },
-    acceleratedFlow : {
-      x : '100px',
-      y : '100px',
-      parent : 'root',
-      status : 'inactive',
-    },
-    golems: {
-      x : '100px',
-      y : '200px',
-      parent : 'root',
-      status : 'inactive',
-    },
-    elementals : {
-      x : '250px',
-      y : '300px',
-      parent : 'golems',
-      status : 'inactive',
-    }
   }
 
   setEdge = (node, x_1, y_1, x_2, y_2, status) => {
@@ -81,7 +81,7 @@ class Home extends Component {
     })
   }
 
-  nodeProps = { render : this.setEdge, func : this.props.tree, tree : this.tree}
+  nodeProps = { render : this.setEdge, func : this.props.tree, tree : this.tree.root}
 
   
 
@@ -123,18 +123,12 @@ class Home extends Component {
               {this.renderCosts(this.props.main.stoneGolem.costs)}
           </div>
           <div className={css(styles.skillTree)}>
+            <div>
+            </div>
             
             <svg width='100%' height='100%' className={css(styles.skillTreeSVG)}>
               {this.renderEdges()}
-              <Node {...this.nodeProps} parent={'root'} name={'root'}/>
-                <Node {...this.nodeProps} parent={'root'} name={'acceleratedFlow'}/>
-                <Node {...this.nodeProps} parent={'root'} name={'golems'}/>
-                  <Node {...this.nodeProps} parent={'golems'} name={'elementals'}/>
-            
-            {/* <Node tree={this.tree} name = {"C"} x = {'320px'} y = {'128px'}/>
-            <Node tree={this.tree} name = {"D"} x = {'400px'} y = {'253px'}/>
-            <Node tree={this.tree} name = {"E"} x = {'450px'} y = {'500px'}/>
-            <Node tree={this.tree} name = {"F"} x = {'650px'} y = {'600px'}/> */}
+              <Node {...this.nodeProps} name={'root'} parentX={'50px'} parentY={'50px'} parentStatus={'active'}/>
             </svg> 
           </div>
         </div>  
@@ -188,7 +182,7 @@ const styles = StyleSheet.create({
     stroke: '#545654',
   },
   active : {
-    stroke: '#3ed84b',
+    stroke: '#f2ae30',
   },
 });
 
